@@ -47,7 +47,7 @@ while( $row=$query->fetch_array(MYSQLI_ASSOC) ) {
 	$nestedData[] = '£'.number_format($row['price']);
 	$nestedData[] = $row['type'];
 	$nestedData[] = date("d-M-Y H:i",strtotime($row['created']));
-	$nestedData[] = '<a href="?action=edit&id='.$row['uuid'].'" class="btn btn-success">Edit</a> <a href="?action=delete&id='.$row['uuid'].'" class="btn btn-danger">Delete</a>';
+	$nestedData[] = '<a href="?action=view&id='.$row['uuid'].'" class="btn btn-success">Learn More</a> <a href="?action=delete&id='.$row['uuid'].'" class="btn btn-danger">Delete</a>';
 	
 	$data[] = $nestedData;
 }
