@@ -4,8 +4,15 @@ header('Content-Type: application/json');
 $requestData= $_REQUEST;
 $columns = array( 
 // datatable column index  => database column name
-	0 =>'uuid', 
-	1 => 'country'
+	0 =>'image_thumb', 
+	1 => 'county', 
+	2 => 'country', 
+	3 => 'bedrooms', 
+	4 => 'bathrooms', 
+	5 => 'price', 
+	6 => 'type', 
+	7 => 'created', 
+	8 => 'uuid'
 );
 
 // getting total number records without any search
@@ -18,21 +25,20 @@ $totalFiltered = $totalData;  // when there is no search parameter then total nu
 $sql = "SELECT * FROM `properties` ";
 
 
-/* if( !empty($requestData['search']['value']) ) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
-	$sql.=" AND ( firstname LIKE '".$requestData['search']['value']."%' ";    
-	$sql.=" OR surname LIKE '".$requestData['search']['value']."%' )";
-} */
+ if( !empty($requestData['search']['value']) ) {  
+	$sql.=" WHERE ( countyLIKE '".$requestData['search']['value']."%' ";    
+	$sql.=" OR country LIKE '".$requestData['search']['value']."%' )";
+} 
 $query=$mysqli->query($sql);
 $totalFiltered = $query->num_rows;
 $sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."  LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
-error_log($sql);
 $query=$mysqli->query($sql);
 
 $data = array();
 
 while( $row=$query->fetch_array(MYSQLI_ASSOC) ) { 
 	$nestedData=array(); 
-	$nestedData[] = '<img src="'.$row['image_thumb'].'" alt="thumbnail"/>';
+	$nestedData[] = '<a href="'.$row['image_full'].'" target="_blank"><img src="'.$row['image_thumb'].'" alt="'.$row['country'].' thumbnail" width="100" height="100" /></a>';
 	$nestedData[] = $row['county'];
 	$nestedData[] = $row['country'];
 	$nestedData[] = $row['bedrooms'];
@@ -40,7 +46,7 @@ while( $row=$query->fetch_array(MYSQLI_ASSOC) ) {
 	$nestedData[] = '£'.number_format($row['price']);
 	$nestedData[] = $row['type'];
 	$nestedData[] = date("d-M-Y H:i",strtotime($row['created']));
-	$nestedData[] = '<a href="#" class="btn btn-success">Edit</a> <a href="#" class="btn btn-danger">Delete</a>';
+	$nestedData[] = '<a href="?action=edit&id='.$row['uuid'].'" class="btn btn-success">Edit</a> <a href="?action=delete&id='.$row['uuid'].'" class="btn btn-danger">Delete</a>';
 	
 	$data[] = $nestedData;
 }
