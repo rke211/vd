@@ -13,7 +13,6 @@ do {
 	`country`='" . $mysqli->real_escape_string( $row->country ) . "',
 	`town`='" . $mysqli->real_escape_string( $row->town ) . "',
 	`desc`='" . $mysqli->real_escape_string( $row->description ) . "',
-	`url`=' ',
 	`address`='" . $mysqli->real_escape_string( $row->address ) . "',
 	`image_full`='" . $mysqli->real_escape_string( $row->image_full ) . "',
 	`image_thumb`='" . $mysqli->real_escape_string( $row->image_thumbnail ) . "',
@@ -31,7 +30,6 @@ do {
 	`country`='" . $mysqli->real_escape_string( $row->country ) . "',
 	`town`='" . $mysqli->real_escape_string( $row->town ) . "',
 	`desc`='" . $mysqli->real_escape_string( $row->description ) . "',
-	`url`=' ',
 	`address`='" . $mysqli->real_escape_string( $row->address ) . "',
 	`image_full`='" . $mysqli->real_escape_string( $row->image_full ) . "',
 	`image_thumb`='" . $mysqli->real_escape_string( $row->image_thumbnail ) . "',
@@ -44,7 +42,7 @@ do {
 	`listing_type`='" . $mysqli->real_escape_string( $row->type ) . "',
 	`modified`=CURRENT_TIMESTAMP();" );
   }
-  echo urldecode( $data->next_page_url ) . '<br>';
+ // echo urldecode( $data->next_page_url ) . '<br>';
   $next = urldecode( $data->next_page_url );
   $json = file_get_contents( $next );
   $data = json_decode( $json );
