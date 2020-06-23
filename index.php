@@ -12,7 +12,12 @@
 <title>Properties</title>
 </head>
 <body>
-<div class="container-fluid mt-2"> <a data-toggle="collapse" href="#manageProperty" role="button" aria-expanded="false" aria-controls="manageProperty"   class="btn btn-success float-right">Add Property</a>
+<div class="container-fluid mt-2"> 
+	<? if(isset($_GET['action'])){ ?>
+	<a href="index.php"   class="btn btn-danger float-right">Back To Search</a>
+	<? }else{ ?>
+	<a data-toggle="collapse" href="#manageProperty" role="button" aria-expanded="false" aria-controls="manageProperty"   class="btn btn-success float-right">Add Property</a>
+	<? } ?>
   <div class="clearfix"></div>
   <?
   if ( isset( $_POST[ 'btnSave' ] ) ) {
@@ -135,6 +140,11 @@ if(!isset($_POST['uuid'])){
               </select>
             </div>
             <div class="form-group col-12">
+              <label class="font-weight-bold">Address</label>
+              <input type="text" class="form-control" name="address"<?=($propdata ? ' value="'.$propdata['address'].'"':''); ?> required>
+</textarea>
+            </div>
+            <div class="form-group col-12">
               <label class="font-weight-bold">Description</label>
               <textarea name="desc" class="form-control" required> <?=($propdata ? $propdata['desc']:''); ?>
 </textarea>
@@ -166,6 +176,27 @@ if(!isset($_POST['uuid'])){
   <?
   if ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == "delete" && isset( $_GET[ 'id' ] ) ) {
     include_once( "delete.php" );
+  }elseif ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == "view" && isset( $_GET[ 'id' ] ) ) {
+    	$property = $mysqli->query( "SELECT * FROM properties WHERE uuid ='" . $mysqli->real_escape_string( $_GET[ 'id' ] ) . "';" );
+	  $nicename=["uuid"=>"Property ID","county"=>"County","country"=>"Country","town"=>"Town","desc"=>"Description","postcode"=>"Postcode","address"=>"Address","lat"=>"Latitude","long"=>"Longitude","bedrooms"=>"Number of Bedrooms","bathrooms"=>"Number of Bathrooms","price"=>"Price","type"=>"Property Type","listing_type"=>"Listing Type","created"=>"Listed On","modified"=>"Last Updated",];
+            if ( $property->num_rows ) {
+              	$propdata = $property->fetch_array( MYSQLI_ASSOC );
+				echo'<div class="card mt-3">
+					<div class="card-header">Property Details</div>
+					<div class="card-body"><div class="row">';
+					foreach($nicename as $key=>$value){
+						echo'<div class="col-3 font-weight-bold">'.$value.'</div>';
+						echo'<div class="col-9">'.($key=="price" ? '£'.number_format($propdata[$key]): $propdata[$key]).'</div>';
+					}
+				echo'<div class="col-6 text-center font-weight-bold">Full Image:<br><img src="'.$propdata['image_full'].'" alt="Full Image"></div>
+				<div class="col-6 text-center font-weight-bold">Thumbnail Image:<br><img src="'.$propdata['image_thumb'].'" alt="Thumbnail"></div>';
+				echo'</div>
+				<a href="?action=edit&id='.$propdata['uuid'].'" class="btn btn-success btn-block mt-3">Edit Property</a>
+				</div>
+				</div>';
+			}else{
+				echo'<div class="alert alert-danger">The propert you specified could not be found</div>';
+			}
   }
   ?>
   <table id="example" class="table table-striped table-bordered mt-3" cellspacing="0" width="100%">
