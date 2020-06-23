@@ -1,11 +1,13 @@
 <?php
 // run as cron every x minutes/hours
 require_once( "config.php" );
+$page = 1;
 $url = 'https://trialapi.craig.mtcdevserver.com/api/properties?api_key=3NLTTNlXsi6rBWl7nYGluOdkl2htFHug&page[size]=100';
-$json = file_get_contents( $url . '&page[number]=1' );
+$json = file_get_contents( $url . '&page[number]='.$page );
 $data = json_decode( $json );
 $importdata = $data->data;
 do {
+$page = $data->current_page;
   foreach ( $importdata as $row ) {
     $mysqli->query( "INSERT INTO `properties` 
 	SET `uuid`='" . $mysqli->real_escape_string( $row->uuid ) . "',
@@ -42,11 +44,11 @@ do {
 	`listing_type`='" . $mysqli->real_escape_string( $row->type ) . "',
 	`modified`=CURRENT_TIMESTAMP();" );
   }
- // echo urldecode( $data->next_page_url ) . '<br>';
-  $next = urldecode( $data->next_page_url );
+	$page++;
+  $next = $url . '&page[number]='.$page;
   $json = file_get_contents( $next );
   $data = json_decode( $json );
   $importdata = $data->data;
-} while ( !is_null( $data->next_page_url ) );
+} while ( $page <= $data->last_page);
 
 mysqli_close( $mysqli );
