@@ -26,8 +26,9 @@ $sql = "SELECT * FROM `properties` ";
 
 
  if( !empty($requestData['search']['value']) ) {  
-	$sql.=" WHERE ( countyLIKE '".$requestData['search']['value']."%' ";    
-	$sql.=" OR country LIKE '".$requestData['search']['value']."%' )";
+	$sql.=" WHERE ( county LIKE '".$mysqli->real_escape_string($requestData['search']['value'])."%' ";    
+	$sql.=" OR country LIKE '".$mysqli->real_escape_string($requestData['search']['value'])."%'";    
+	$sql.=" OR type LIKE '".$mysqli->real_escape_string($requestData['search']['value'])."%' )";
 } 
 $query=$mysqli->query($sql);
 $totalFiltered = $query->num_rows;
